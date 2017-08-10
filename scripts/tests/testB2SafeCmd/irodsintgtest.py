@@ -9,16 +9,16 @@ import os.path
 import json
 import subprocess
 import string
+import environmenthelper
 
 sys.path.append("../../cmd")
 
-TEST_RESOURCES_PATH = '../tests/resources/'    # Trailing '/' is required
-
 HOME = os.path.expanduser("~")
 IRODS_ENV_HOME = HOME+'/.irods/'
-IRODS_ENV = 'irods_environment.json'
+IRODS_ENV_FILENAME = 'irods_environment.json'
 IRODS_ENV_PATH = IRODS_ENV_HOME+IRODS_ENV
 
+# TODO The skip condition is wrong now.
 @unittest.skipUnless(os.path.isfile(IRODS_ENV_PATH) and os.access(IRODS_ENV_PATH, os.R_OK),
                      'requires iRODS environment file at %s' % IRODS_ENV_PATH)
 
@@ -43,13 +43,18 @@ class IrodsIntegrationTests(unittest.TestCase):
 
     def setUp(self):
         """Setup irods environment variables before the tests have run"""
-        jsonfilecontent = json.loads(open(IRODS_ENV_PATH, 'r').read())
-        self.irods_default_hash_scheme = jsonfilecontent.pop('irods_default_hash_scheme')
-        self.irods_default_resource = jsonfilecontent.pop('irods_default_resource')
-        self.irods_home = jsonfilecontent.pop('irods_home')
-        self.irods_user_name = jsonfilecontent.pop('irods_user_name')
-        self.irods_zone_name = jsonfilecontent.pop('irods_zone_name')
 
+        required_entries = ['irods_home', 'irods_user_name', 'irods_zone_name']
+        jsonfilecontent = environmenthelper.get_environment(required_entries)
+        try: 
+            #self.irods_default_hash_scheme = jsonfilecontent.pop('irods_default_hash_scheme')
+            #self.irods_default_resource = jsonfilecontent.pop('irods_default_resource')
+            self.irods_home = jsonfilecontent.pop('irods_home')
+            self.irods_user_name = jsonfilecontent.pop('irods_user_name')
+            self.irods_zone_name = jsonfilecontent.pop('irods_zone_name')
+        except KeyError as e:
+            print('INFO: '+IRODS_ENV_FILENAME+' file is missing items!')
+            raise e
 
     def tearDown(self):
         """ Cleanup testB2SafeCmd environment after the tests have run
