@@ -16,7 +16,7 @@ sys.path.append("../../cmd")
 HOME = os.path.expanduser("~")
 IRODS_ENV_HOME = HOME+'/.irods/'
 IRODS_ENV_FILENAME = 'irods_environment.json'
-IRODS_ENV_PATH = IRODS_ENV_HOME+IRODS_ENV
+IRODS_ENV_PATH = IRODS_ENV_HOME+IRODS_ENV_FILENAME
 
 # TODO The skip condition is wrong now.
 @unittest.skipUnless(os.path.isfile(IRODS_ENV_PATH) and os.access(IRODS_ENV_PATH, os.R_OK),
