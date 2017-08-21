@@ -54,7 +54,7 @@ def get_environment(required_entries):
         jsonfilecontent = enrich_environment_with_additional_info_ONLYREQUIRED(jsonfile1, jsonfile2, required_entries)
         modify_irods_home(jsonfilecontent, jsonfile1)
         check_json_content(jsonfilecontent, required_entries)
-    print("\nINFO: environment used for tests:    "+str(jsonfilecontent))
+    print("INFO: environment used for tests:    "+str(jsonfilecontent))
     return jsonfilecontent
 
 def read_json_file(path_with_filename):

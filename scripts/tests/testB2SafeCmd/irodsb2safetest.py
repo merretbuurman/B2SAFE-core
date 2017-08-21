@@ -53,9 +53,9 @@ def test_assert_array(self, testvaluesarray):
         expected = testvalues['expected_value']
         output_string = testvalues['string']
         if action.lower() == 'equal':
-            self.assertEqual(result, expected, output_string)
+            self.assertEqual(result, expected, output_string+' (received'+str(result)+')')
         elif action.lower() == 'notequal':
-            self.assertNotEqual(result, expected, output_string)
+            self.assertNotEqual(result, expected, output_string+' (received'+str(result)+')')
         else:
             print "The action defined is NOT valid"
 
