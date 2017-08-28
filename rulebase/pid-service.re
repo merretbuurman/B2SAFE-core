@@ -67,7 +67,13 @@ EUDATCreatePID(*parent_pid, *path, *ror, *fio, *fixed, *newPID) {
             EUDATSearchPID(*path, *existing_pid);
         }
    
-        if((*existing_pid == "empty") || (*existing_pid == "None")) {
+        if (*existing_pid == "null") {
+            logError("[EUDATCreatePID] error during check whether PID already existed.");
+            # TODO: To avoid the script to continue with the PID "null" and trying
+            # to lookup PID records of PID = "null", etc., it would be good to throw
+            # an error here, interrupt the script.
+
+        } else if((*existing_pid == "empty") || (*existing_pid == "None")) {
             # add extraType parameters
             *extraType = "empty";
 
@@ -204,7 +210,11 @@ EUDATSearchPIDchecksum(*path, *existing_pid) {
         *existing_pid ="empty";
     }
     else {
-        EUDATePIDsearch("CHECKSUM", *checksum, *existing_pid);
+        EUDATePIDsearch("CHECKSUM", *checksum, *existing_pid); # may return "null"
+        if (*existing_pid == "null") {
+            logError("[EUDATSearchPIDchecksum] problem with reverse lookup. Found pid *existing_pid.");
+        }
+        logDebug("[EUDATSearchPIDchecksum] Found pid *existing_pid. Will look for URL.");
         msiExecCmd("epicclient.py", "*credStoreType *credStorePath read *existing_pid --key URL",
                    "null", "null", "null", *outSPC);
         msiGetStdoutInExecCmdOut(*outSPC, *URL);
@@ -449,7 +459,10 @@ EUDATePIDsearch(*field, *value, *PID) {
     # new   : ["841/test"]. An array/list of multiple PID's separated by "," and a space
     if ( str(*PID) == "empty" ) { 
         *status0=bool("false"); 
-    } else {
+    } else if ( str(*PID) == "null" ){
+        logDebug("[EUDATePIDsearch] error in reverse lookup, received null (possibly a problem with reverse lookup credentials).");
+
+     } else {
         # remove brackets, quotes and spaces from the "*PID" string
         *outStr=str(*PID);
         foreach ( *char in list("[","]","\""," ") ) {

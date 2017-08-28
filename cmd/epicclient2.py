@@ -50,6 +50,8 @@ def search(args):
         return
 
     result = search_execution(client, args.key, args.value)
+    # Note: result may be 'null' (str) if the b2handle library returns
+    # None, e.g. in case of reverse lookup credential problems.
 
     sys.stdout.write(result)
 
