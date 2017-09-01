@@ -73,7 +73,8 @@ EUDATCreatePID(*parent_pid, *path, *ror, *fio, *fixed, *newPID) {
             # to lookup PID records of PID = "null", etc., it would be good to throw
             # an error here, interrupt the script.
 
-        } else if((*existing_pid == "empty") || (*existing_pid == "None")) {
+        }
+        if((*existing_pid == "empty") || (*existing_pid == "None")) {
             # add extraType parameters
             *extraType = "empty";
 
@@ -459,10 +460,10 @@ EUDATePIDsearch(*field, *value, *PID) {
     # new   : ["841/test"]. An array/list of multiple PID's separated by "," and a space
     if ( str(*PID) == "empty" ) { 
         *status0=bool("false"); 
-    } else if ( str(*PID) == "null" ){
-        logDebug("[EUDATePIDsearch] error in reverse lookup, received null (possibly a problem with reverse lookup credentials).");
-
-     } else {
+    } else {
+        if ( str(*PID) == "null" ){
+            logDebug("[EUDATePIDsearch] error in reverse lookup, received null (possibly a problem with reverse lookup credentials).");
+        }
         # remove brackets, quotes and spaces from the "*PID" string
         *outStr=str(*PID);
         foreach ( *char in list("[","]","\""," ") ) {
